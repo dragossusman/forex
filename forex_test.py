@@ -1,6 +1,7 @@
 import websocket
 import http.client
 import time
+import statistics
 
 def on_message(ws, message):
     print(message)
@@ -61,11 +62,18 @@ def validate_symbols(ws):
 def performance_tests(ws):
 	#create the HTTP client
 	con = http.client.HTTPConnection("finnhub.io/forex/symbols?exchange=oanda")
+	list_of_request_time = []
 	for x in range(30):
 		start = time.perf_counter()
 		con.request("GET", token="ccs2su2ad3i8m876bjrgccs2su2ad3i8m876bjs0")
 		request_time = time.perf_counter() - start
-		
+		list_of_request_time.append(request_time)
+	
+	#print mean of request time
+	print("Mean of request time is: " + statistics.fmean(list_of_request_time))
+	# print standard deviation of request time
+	print("standard deviation of request time is: " + statistics.stdev(list_of_request_time))
+	
 if __name__ == "__main__":
     websocket.enableTrace(True)
 	# I've added here the token for authentication
@@ -75,13 +83,5 @@ if __name__ == "__main__":
                               on_close = on_close)
     ws.on_open = on_open
 	ws.validate_symbols
+	ws.performance_tests
     ws.run_forever()
-
-
-Performance tests
-
-while(n = 30):	
-	# create HTTP client	
-	# get API for the symbols 
-	# s = time.time()
-	# 
